@@ -5,8 +5,8 @@ import { Diff, RegistryDiff, CollectionDiff } from "../schema-diff/types";
 import { MigrationConfig } from "./types";
 
 export function generateMigration(
-    {diff, registry, config} :
-    {diff : RegistryDiff, registry? : StorageRegistry, config? : MigrationConfig}
+    {diff, config} :
+    {diff : RegistryDiff, config? : MigrationConfig}
 ) {
     let operations = [
         ...getDiffOperations(diff.collections, 'collection', 'created'),

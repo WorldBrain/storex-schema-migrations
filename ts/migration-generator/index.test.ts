@@ -28,5 +28,23 @@ describe('MigrationGenerator', () => {
         ])
     })
 
-    it('should not generate remove index operations for removed fields')
+    it('should not generate remove index operations for removed fields', () => {
+        const diff : RegistryDiff = {
+            fromVersion: new Date(2018, 6, 6),
+            toVersion: new Date(2018, 6, 6),
+            collections: {
+                created: [], removed: [],
+                changed: {
+                    newsletters: {
+                        fields: {created: [], changed: {}, removed: ['bla']},
+                        indices: {created: [], removed: ['bla']},
+                        relationships: {created: [], removed: []},
+                    }
+                }
+            }
+        }
+        expect(generateMigration({diff})).toEqual([
+            {operation: 'remove-field', collection: 'newsletters', field: 'bla'},
+        ])
+    })
 })

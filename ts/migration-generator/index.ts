@@ -1,4 +1,4 @@
-import flatten from 'lodash/flatten'
+import * as some from 'lodash/some'
 import StorageRegistry from "storex/lib/registry";
 import { Diff, RegistryDiff, CollectionDiff } from "../schema-diff/types";
 import { MigrationConfig } from "./types";
@@ -7,7 +7,7 @@ export function generateMigration(
     {diff, registry, config} :
     {diff : RegistryDiff, registry? : StorageRegistry, config? : MigrationConfig}
 ) {
-    const operations = [
+    let operations = [
         ...getDiffOperations(diff.collections, 'collection', 'created'),
         ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'created'),
         ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'created'),
@@ -16,6 +16,11 @@ export function generateMigration(
         ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'removed'),
         ...getDiffOperations(diff.collections, 'collection', 'removed'),
     ]
+    operations = operations.filter(operation => operation.operation !== 'remove-index' || !some(operations, {
+        operation: 'remove-field',
+        collection: operation.collection,
+        field: operation.index,
+    }))
     return operations
 }
 

@@ -19,12 +19,12 @@ describe('MigrationGenerator', () => {
             }
         }
         expect(generateMigration({diff})).toEqual([
-            {type: 'add-collection', collection: 'users'},
-            {type: 'add-field', collection: 'newsletters', field: 'category'},
-            {type: 'add-index', collection: 'newsletters', index: 'spam'},
-            {type: 'remove-index', collection: 'newsletters', index: 'grumpy'},
-            {type: 'remove-field', collection: 'newsletters', field: 'bla'},
-            {type: 'remove-collection', collection: 'passwords'},
+            {type: 'addCollection', collection: 'users'},
+            {type: 'addField', collection: 'newsletters', field: 'category'},
+            {type: 'addIndex', collection: 'newsletters', index: 'spam'},
+            {type: 'removeIndex', collection: 'newsletters', index: 'grumpy'},
+            {type: 'removeField', collection: 'newsletters', field: 'bla'},
+            {type: 'removeCollection', collection: 'passwords'},
         ])
     })
 
@@ -44,7 +44,7 @@ describe('MigrationGenerator', () => {
             }
         }
         expect(generateMigration({diff})).toEqual([
-            {type: 'remove-field', collection: 'newsletters', field: 'bla'},
+            {type: 'removeField', collection: 'newsletters', field: 'bla'},
         ])
     })
 
@@ -71,10 +71,10 @@ describe('MigrationGenerator', () => {
                 ]
             }
         })).toEqual([
-            {type: 'add-field', collection: 'user', field: 'displayName'},
+            {type: 'addField', collection: 'user', field: 'displayName'},
             {type: 'write', collection: 'user', field: 'displayName', value: '${object.firstName} ${object.lastName}'},
-            {type: 'remove-field', collection: 'user', field: 'firstName'},
-            {type: 'remove-field', collection: 'user', field: 'lastName'},
+            {type: 'removeField', collection: 'user', field: 'firstName'},
+            {type: 'removeField', collection: 'user', field: 'lastName'},
         ])
     })
 })

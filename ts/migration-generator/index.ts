@@ -11,13 +11,13 @@ export function generateMigration(
         ...getDiffOperations(diff.collections, 'collection', 'created'),
         ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'created'),
         ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'created'),
-
+        ...(config && config.operations ? config.operations : []),
         ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'removed'),
         ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'removed'),
         ...getDiffOperations(diff.collections, 'collection', 'removed'),
     ]
-    operations = operations.filter(operation => operation.operation !== 'remove-index' || !some(operations, {
-        operation: 'remove-field',
+    operations = operations.filter(operation => operation.type !== 'remove-index' || !some(operations, {
+        type: 'remove-field',
         collection: operation.collection,
         field: operation.index,
     }))
@@ -26,7 +26,7 @@ export function generateMigration(
 
 export function getDiffOperations(diff : Diff, type : string, key : 'created' | 'removed') {
     const prefix = key === 'created' ? 'add' : 'remove'
-    return Array.from(diff[key]).map(item => ({operation: `${prefix}-${type}`, [type]: item}))
+    return Array.from(diff[key]).map(item => ({type: `${prefix}-${type}`, [type]: item}))
 }
 
 export function getCollectionDiffOperations(diffs : {[collection : string]: CollectionDiff}, diffKey : string, type : string, key : 'created' | 'removed') {

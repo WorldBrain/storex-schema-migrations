@@ -6,6 +6,7 @@ export type OperationConfig = WriteOperationConfig | RunJavascriptOperationConfi
 
 export interface WriteOperationConfig {
     type : 'write'
+    collection : string
     field : string
     value : any
 }

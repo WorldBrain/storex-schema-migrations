@@ -1,17 +1,23 @@
+export interface Migration {
+    prepareOperations : any[]
+    dataOperations : any[]
+    finalizeOperations : any[]
+}
+
 export interface MigrationConfig {
-    operations : OperationConfig[]
+    dataOperations : OperationConfig[]
 }
 
 export type OperationConfig = WriteOperationConfig | RunJavascriptOperationConfig
 
 export interface WriteOperationConfig {
-    type : 'write'
+    type : 'writeField'
     collection : string
     field : string
     value : any
 }
 
 export interface RunJavascriptOperationConfig {
-    type : 'run-js'
+    type : 'runJs'
     function : () => Promise<any>
 }

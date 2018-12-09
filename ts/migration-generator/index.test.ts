@@ -7,7 +7,7 @@ export const TEST_USER_MIGRATION = {
         { type: 'schema.addField', collection: 'user', field: 'displayName' },
     ],
     dataOperations: [
-        { type: 'writeField', collection: 'user', field: 'displayName', value: '${object.firstName} ${object.lastName}' }
+        { type: 'writeField', collection: 'user', field: 'displayName', value: '`${object.firstName} ${object.lastName}`' }
     ],
     finalizeOperations: [
         { type: 'schema.removeField', collection: 'user', field: 'firstName' },
@@ -89,7 +89,7 @@ describe('Migration generator', () => {
             diff,
             config: {
                 dataOperations: [
-                    {type: 'writeField', collection: 'user', field: 'displayName', value: '${object.firstName} ${object.lastName}'}
+                    {type: 'writeField', collection: 'user', field: 'displayName', value: '`${object.firstName} ${object.lastName}`'}
                 ]
             }
         })).toEqual(TEST_USER_MIGRATION)

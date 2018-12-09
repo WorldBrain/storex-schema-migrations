@@ -1,24 +1,63 @@
 import StorageManager from "storex"
-import { Migration } from "../migration-generator/types"
-import { MigrationStageChoice } from "./types";
+import { Migration, MigrationOperationConfig } from "../migration-generator/types"
+import { MigrationStageChoice, MigrationStage } from "./types";
+import { DEFAULT_DATA_OPERATIONS } from "./data-operations";
 
 export async function runMigration(
-    {migration, storageManager, stage} :
-    {migration : Migration, storageManager : StorageManager, stage : MigrationStageChoice})
+    {migration, storageManager, stages} :
+    {migration : Migration, storageManager : StorageManager, stages : MigrationStageChoice})
 {
-    if (stage === 'all') {
-        stage = ['prepare', 'data', 'finalize']
+    if (stages === 'all') {
+        stages = {prepare: true, data: true, finalize: true}
+    }
+
+    _validateSchemaOperations(migration, 'prepare')
+    _validateDataOperations(migration.dataOperations)
+    _validateSchemaOperations(migration, 'finalize')
+
+    if (stages.prepare) {
+        await storageManager.backend.operation('alterSchema', {
+            operations: _prepareSchemaOperations(migration, 'prepare'),
+        })
+    }
+    if (stages.data) {
+        await _executeDataOperations(migration.dataOperations, storageManager)
+    }
+    if (stages.finalize) {
+        await storageManager.backend.operation('alterSchema', {
+            operations: _prepareSchemaOperations(migration, 'finalize'),
+        })
     }
 }
 
-export function getNextBatch(migration) {
-    const batch = []
-    for (const step of migration) {
-        if (step.type.indexOf('schema.') === 0) {
-            batch.push({...step, type: step.type.substr(step.type.indexOf('schema.').length)})
-        } else {
-            
+export function _validateSchemaOperations(migration : Migration, stage : MigrationStage) {
+    const key = `${stage}Operations`
+    for (const operation of migration[key]) {
+        if (operation.type.indexOf('schema.') !== 0) {
+            throw new Error(`Unsupported operation in 'prepare' stage: '${operation.type}'`)
         }
     }
-    return { batch }
+}
+
+export function _validateDataOperations(operations : MigrationOperationConfig[]) {
+    for (const operation of operations) {
+        if (operation.type !== 'writeField') {
+            throw new Error(`Unknown data operation during migration '${operation.type}'`)
+        }
+    }
+}
+
+export function _prepareSchemaOperations(migration : Migration, stage : MigrationStage) {
+    const key = `${stage}Operations`
+    return migration[key].map(
+        operation => {
+            return {...operation, type: operation.type.split('.').slice(1).join('')}
+        }
+    )
+}
+
+export async function _executeDataOperations(operations : MigrationOperationConfig[], storageManager : StorageManager) {
+    for (const operation of operations) {
+        await DEFAULT_DATA_OPERATIONS[operation.type](operation, storageManager)
+    }
 }

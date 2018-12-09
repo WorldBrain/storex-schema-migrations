@@ -1,16 +1,21 @@
 export interface Migration {
-    prepareOperations : any[]
-    dataOperations : any[]
-    finalizeOperations : any[]
+    prepareOperations : MigrationOperationConfig[]
+    dataOperations : MigrationOperationConfig[]
+    finalizeOperations : MigrationOperationConfig[]
 }
 
 export interface MigrationConfig {
-    dataOperations : OperationConfig[]
+    dataOperations : MigrationOperationConfig[]
 }
 
-export type OperationConfig = WriteOperationConfig | RunJavascriptOperationConfig
+export type MigrationOperationConfig = UnknownOperationConfig | WriteFieldOperationConfig | RunJavascriptOperationConfig
 
-export interface WriteOperationConfig {
+export interface UnknownOperationConfig {
+    type : string
+    [key : string] : any
+}
+
+export interface WriteFieldOperationConfig {
     type : 'writeField'
     collection : string
     field : string

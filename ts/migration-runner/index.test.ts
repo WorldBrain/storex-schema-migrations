@@ -5,7 +5,7 @@ import { TEST_USER_MIGRATION } from "../migration-generator/index.test";
 describe('Migration runner', () => {
     it('should be able to run a migration on Storex', async () => {
         const calls = []
-        const stub = (method, collection = null, func = null) => args => {
+        const stub = (method, collection = null, func = null) => async (...args) => {
             calls.push({...collection ? {collection} : {}, method, args})
             if (func) {
                 return func({collection, method, args})
@@ -13,32 +13,41 @@ describe('Migration runner', () => {
         }
 
         const storageManager = {
-            alterSchema: stub('alterSchema'),
-            transaction: stub('transaction', null, async runner => {
-                await runner({collection: collection => ({
-                    findObjects: stub('findObjects', collection, (query, options) => {
-                        if (Object.keys(query).length === 0) {
-                            return [
-                                {id: 1, firstName: 'Jane', lastName: 'Daniels'},
-                                {id: 2, firstName: 'Jack', lastName: 'Doe'},
-                            ]
-                        }
-                    }),
-                    updateOneObject: stub('updateOneObject', collection)
-                })})
-            }),
+            registry: {
+                collections: {
+                    user: {pkIndex: 'id'}
+                }
+            },
+            backend: {
+                operation: stub('operation', null, async ({args: [operation, runner]}) => {
+                    if (operation === 'transaction') {
+                        await runner({collection: collection => ({
+                            findObjects: stub('findObjects', collection, async ({args: [query, options]}) => {
+                                if (Object.keys(query).length === 0) {
+                                    return [
+                                        {id: 1, firstName: 'Jane', lastName: 'Daniels'},
+                                        {id: 2, firstName: 'Jack', lastName: 'Doe'},
+                                    ]
+                                }
+                            }),
+                            updateOneObject: stub('updateOneObject', collection)
+                        })})
+                    }
+                }),
+            },
         }
 
         await runMigration({
             storageManager: storageManager as any,
             migration: TEST_USER_MIGRATION,
-            stage: 'all'
+            stages: 'all',
         })
 
         expect(calls).toEqual([
             {
-                method: 'alterSchema',
+                method: 'operation',
                 args: [
+                    'alterSchema',
                     {operations: [
                         { type: 'addField', collection: 'user', field: 'displayName' },
                     ]}
@@ -46,13 +55,13 @@ describe('Migration runner', () => {
                 
             },
             {
-                method: 'transaction',
-                args: [expect.any(Function)],  
+                method: 'operation',
+                args: ['transaction', expect.any(Function)],
             },
             {
                 method: 'findObjects',
                 collection: 'user',
-                args: [{}]
+                args: [{}, {fields: ['id']}]
             },
             {
                 method: 'updateOneObject',
@@ -65,13 +74,13 @@ describe('Migration runner', () => {
                 args: [{id: 2}, {displayName: 'Jack Doe'}]
             },
             {
-                method: 'alterSchema',
+                method: 'operation',
                 args: [
+                    'alterSchema',
                     {operations: [
-                        { type: 'removeField', collection: 'user', field: 'firstName' },
-                        { type: 'removeField', collection: 'user', field: 'lastName' },
-                    ]}
-                ],
+                    { type: 'removeField', collection: 'user', field: 'firstName' },
+                    { type: 'removeField', collection: 'user', field: 'lastName' },
+                ]}],
             },
         ])
     })

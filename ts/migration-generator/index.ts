@@ -1,6 +1,6 @@
 import * as camelCase from 'lodash/camelCase'
 import * as some from 'lodash/some'
-import StorageRegistry from "storex/lib/registry";
+// import StorageRegistry from "storex/lib/registry";
 import { Diff, RegistryDiff, CollectionDiff } from "../schema-diff/types";
 import { MigrationConfig, Migration } from "./types";
 
@@ -25,8 +25,8 @@ export function generateMigration(
     }
     operations.finalizeOperations = operations.finalizeOperations.filter(operation => operation.type !== 'schema.removeIndex' || !some(operations.finalizeOperations, {
         type: 'schema.removeField',
-        collection: operation.collection,
-        field: operation.index,
+        collection: operation['collection'],
+        field: operation['index'],
     }))
     return operations
 }

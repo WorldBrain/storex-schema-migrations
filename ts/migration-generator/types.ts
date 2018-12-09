@@ -1,3 +1,5 @@
+import { OptionalBackwardMigrationDirectionMap } from "../types"
+
 export interface Migration {
     prepareOperations : MigrationOperationConfig[]
     dataOperations : MigrationOperationConfig[]
@@ -5,7 +7,7 @@ export interface Migration {
 }
 
 export interface MigrationConfig {
-    dataOperations : MigrationOperationConfig[]
+    dataOperations : OptionalBackwardMigrationDirectionMap<MigrationOperationConfig[]>
 }
 
 export type MigrationOperationConfig = UnknownOperationConfig | WriteFieldOperationConfig | RunJavascriptOperationConfig

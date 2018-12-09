@@ -31,7 +31,7 @@ describe('Migration generator', () => {
                 }
             }
         }
-        expect(generateMigration({diff})).toEqual({
+        expect(generateMigration({diff, direction: 'forward'})).toEqual({
             prepareOperations: [
                 {type: 'schema.addCollection', collection: 'users'},
                 {type: 'schema.addField', collection: 'newsletters', field: 'category'},
@@ -61,7 +61,7 @@ describe('Migration generator', () => {
                 }
             }
         }
-        expect(generateMigration({diff})).toEqual({
+        expect(generateMigration({diff, direction: 'forward'})).toEqual({
             prepareOperations: [],
             dataOperations: [],
             finalizeOperations: [
@@ -87,10 +87,11 @@ describe('Migration generator', () => {
         }
         expect(generateMigration({
             diff,
+            direction: 'forward',
             config: {
-                dataOperations: [
+                dataOperations: {forward: [
                     {type: 'writeField', collection: 'user', field: 'displayName', value: '`${object.firstName} ${object.lastName}`'}
-                ]
+                ]}
             }
         })).toEqual(TEST_USER_MIGRATION)
     })

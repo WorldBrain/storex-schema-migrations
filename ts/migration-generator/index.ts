@@ -1,13 +1,15 @@
 import * as camelCase from 'lodash/camelCase'
 import * as some from 'lodash/some'
 // import StorageRegistry from "storex/lib/registry";
+import { MigrationDirection } from '../types'
 import { Diff, RegistryDiff, CollectionDiff } from "../schema-diff/types";
-import { MigrationConfig, Migration } from "./types";
+import { MigrationConfig, Migration } from "./types"
 
 export function generateMigration(
-    {diff, config} :
-    {diff : RegistryDiff, config? : MigrationConfig}
+    {diff, config, direction} :
+    {diff : RegistryDiff, direction : MigrationDirection, config? : MigrationConfig}
 ) {
+    const hasDataMigration = config && config.dataOperations && config.dataOperations[direction];
     let operations : Migration = {
         prepareOperations: [
             ...getDiffOperations(diff.collections, 'collection', 'created'),
@@ -15,7 +17,7 @@ export function generateMigration(
             ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'created'),
         ],
         dataOperations: [
-            ...(config && config.dataOperations ? config.dataOperations : []),
+            ...(hasDataMigration ? config.dataOperations[direction] : []),
         ],
         finalizeOperations: [
             ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'removed'),

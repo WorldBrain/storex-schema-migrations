@@ -1,3 +1,4 @@
+import StorageManager from "storex"
 import { OptionalBackwardMigrationDirectionMap } from "../types"
 
 export interface Migration {
@@ -26,5 +27,5 @@ export interface WriteFieldOperationConfig {
 
 export interface RunJavascriptOperationConfig {
     type : 'runJs'
-    function : () => Promise<any>
+    function : ({storageManager} : {storageManager : StorageManager}) => Promise<any>
 }

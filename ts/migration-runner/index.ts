@@ -41,7 +41,7 @@ export function _validateSchemaOperations(migration : Migration, stage : Migrati
 
 export function _validateDataOperations(operations : MigrationOperationConfig[]) {
     for (const operation of operations) {
-        if (operation.type !== 'writeField') {
+        if (!DEFAULT_DATA_OPERATIONS[operation.type]) {
             throw new Error(`Unknown data operation during migration '${operation.type}'`)
         }
     }

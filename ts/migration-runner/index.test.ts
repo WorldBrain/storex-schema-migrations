@@ -84,4 +84,20 @@ describe('Migration runner', () => {
             },
         ])
     })
+
+    it('should run runJs operations', async () => {
+        const calls = []
+        await runMigration({
+            storageManager: 'storageManager' as any,
+            migration: {
+                prepareOperations: [],
+                dataOperations: [
+                    {type: 'runJs', function: (...args) => calls.push(args)}
+                ],
+                finalizeOperations: [],
+            },
+            stages: {data: true},
+        })
+        expect(calls).toEqual([[{storageManager: 'storageManager'}]])
+    })
 })

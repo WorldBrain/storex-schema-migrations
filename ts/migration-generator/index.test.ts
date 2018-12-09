@@ -2,7 +2,15 @@ import * as expect from 'expect'
 import { RegistryDiff } from "../schema-diff/types";
 import { generateMigration } from ".";
 
-export const TEST_USER_MIGRATION = {
+export const TEST_USER_DATA_MIGRATIONS = {
+    forward: [{type: 'writeField', collection: 'user', field: 'displayName', value: '`${object.firstName} ${object.lastName}`'}],
+    backward: [
+        { type: 'writeField', collection: 'user', field: 'firstName', value: {'object-property': [{split: ['$object.displayName', ' ']}, 0]} },
+        { type: 'writeField', collection: 'user', field: 'lastName', value:  [{split: ['$object.displayName', ' ']}, 1]}
+    ],
+}
+
+export const TEST_FORWARD_USER_MIGRATION = {
     prepareOperations: [
         { type: 'schema.addField', collection: 'user', field: 'displayName' },
     ],
@@ -12,6 +20,20 @@ export const TEST_USER_MIGRATION = {
     finalizeOperations: [
         { type: 'schema.removeField', collection: 'user', field: 'firstName' },
         { type: 'schema.removeField', collection: 'user', field: 'lastName' },
+    ]
+}
+
+export const TEST_BACKWARD_USER_MIGRATION = {
+    prepareOperations: [
+        { type: 'schema.addField', collection: 'user', field: 'firstName' },
+        { type: 'schema.addField', collection: 'user', field: 'lastName' },
+    ],
+    dataOperations: [
+        { type: 'writeField', collection: 'user', field: 'firstName', value: {'object-property': [{split: ['$object.displayName', ' ']}, 0]} },
+        { type: 'writeField', collection: 'user', field: 'lastName', value:  [{split: ['$object.displayName', ' ']}, 1]}
+    ],
+    finalizeOperations: [
+        { type: 'schema.removeField', collection: 'user', field: 'displayName' },
     ]
 }
 
@@ -70,7 +92,7 @@ describe('Migration generator', () => {
         })
     })
 
-    it('should plan configured operations at the right point', () => {
+    it('should plan configured forward data operations at the right point', () => {
         const diff : RegistryDiff = {
             fromVersion: new Date(2018, 6, 6),
             toVersion: new Date(2018, 6, 7),
@@ -88,11 +110,29 @@ describe('Migration generator', () => {
         expect(generateMigration({
             diff,
             direction: 'forward',
-            config: {
-                dataOperations: {forward: [
-                    {type: 'writeField', collection: 'user', field: 'displayName', value: '`${object.firstName} ${object.lastName}`'}
-                ]}
+            config: { dataOperations: TEST_USER_DATA_MIGRATIONS }
+        })).toEqual(TEST_FORWARD_USER_MIGRATION)
+    })
+
+    it('should plan configured backward data operations at the right point', () => {
+        const diff : RegistryDiff = {
+            fromVersion: new Date(2018, 6, 7),
+            toVersion: new Date(2018, 6, 6),
+            collections: {
+                created: [], removed: [],
+                changed: {
+                    user: {
+                        fields: {created: ['firstName', 'lastName'], changed: {}, removed: ['displayName']},
+                        indices: {created: [], removed: []},
+                        relationships: {created: [], removed: []},
+                    }
+                }
             }
-        })).toEqual(TEST_USER_MIGRATION)
+        }
+        expect(generateMigration({
+            diff,
+            direction: 'backward',
+            config:  {dataOperations: TEST_USER_DATA_MIGRATIONS }
+        })).toEqual(TEST_BACKWARD_USER_MIGRATION)
     })
 })

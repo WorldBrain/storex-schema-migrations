@@ -1,6 +1,6 @@
 import * as expect from 'expect'
 import { runMigration } from ".";
-import { TEST_USER_MIGRATION } from "../migration-generator/index.test";
+import { TEST_FORWARD_USER_MIGRATION } from "../migration-generator/index.test";
 
 describe('Migration runner', () => {
     it('should be able to run a migration on Storex', async () => {
@@ -39,7 +39,7 @@ describe('Migration runner', () => {
 
         await runMigration({
             storageManager: storageManager as any,
-            migration: TEST_USER_MIGRATION,
+            migration: TEST_FORWARD_USER_MIGRATION,
             stages: 'all',
         })
 

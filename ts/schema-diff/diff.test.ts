@@ -1,5 +1,5 @@
 import * as expect from 'expect'
-import { diffObject, diffStringArray, defaultDifferSelector } from './diff';
+import { diffObject, diffStringArray, defaultDifferSelector, objectArrayDiffer } from './diff';
 
 describe('Low-level object diff', () => {
     it('should detect added and removed keys in top-level objects', () => {
@@ -42,19 +42,60 @@ describe('Low-level object diff', () => {
     })
     
     it('should support custom differs', () => {
-        expect(diffObject({a: [1, 2]}, {a: [1, 2, 3]}, (lhs, rhs, path) => {
+        expect(diffObject({a: [1, 2]}, {a: [1, 2, 3]}, {getDiffer: (lhs, rhs, path) => {
             if (path.length === 1 && path[0] === 'a') {
                 return diffStringArray
             } else {
                 return defaultDifferSelector(lhs, rhs, path)
             }
-        })).toEqual({
+        }})).toEqual({
             added: [],
             removed: [],
             changed: {a: {
                 added: [3],
                 removed: [],
             }}
+        })
+    })
+
+    it('should be able to diff unordered object arrays', () => {
+        expect(diffObject(
+            {a: [{name: 'a'}, {name: 'b'}]},
+            {a: [{name: 'a', blub: 'test'}, {name: 'c'}]}, 
+            {
+                getDiffer: (lhs, rhs, path) => {
+                    if (path.length === 1 && path[0] === 'a') {
+                        return objectArrayDiffer(obj => obj['name'])
+                    } else {
+                        return defaultDifferSelector(lhs, rhs, path)
+                    }
+                }
+            }
+        )).toEqual({
+            added: [],
+            removed: [],
+            changed: {a: {
+                added: [{key: 'c'}],
+                removed: [{key: 'b'}],
+                changed: [{
+                    key: 'a',
+                    added: ['blub']
+                }],
+            }}
+        })
+    })
+
+    it('should be able to ignore fields', () => {
+        expect(diffObject({a: [1, 2]}, {a: [1, 2, 3]}, {getDiffer: (lhs, rhs, path) => {
+            if (path.length === 1 && path[0] === 'a') {
+                return 'ignore'
+            } else {
+                return defaultDifferSelector(lhs, rhs, path)
+            }
+        }})).toEqual({
+            added: [],
+            removed: [],
+            changed: {}
         })
     })
 })

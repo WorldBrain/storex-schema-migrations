@@ -19,7 +19,6 @@
   ],
   "author": "Vincent den Boer",
   "dependencies": {
-    "deep-object-diff": "^1.1.0",
     "lodash": "^4.17.10",
     "source-map-support": "^0.4.18"
   },

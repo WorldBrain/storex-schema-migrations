@@ -12,17 +12,17 @@ export function generateMigration(
     const hasDataMigration = config && config.dataOperations && config.dataOperations[direction];
     let operations : Migration = {
         prepareOperations: [
-            ...generateDiffOperations(diff.collections, 'collection', 'added'),
-            ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'added', generateAddFieldOperations),
-            ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'added'),
+            ...generateAddedToMapOperations(diff.collections, 'collection'),
+            ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'added', generateAddedToMapOperations),
+            ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'added', generateAddedToArrayOperations),
         ],
         dataOperations: [
             ...(hasDataMigration ? config.dataOperations[direction] : []),
         ],
         finalizeOperations: [
-            ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'removed'),
-            ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'removed'),
-            ...generateDiffOperations(diff.collections, 'collection', 'removed'),
+            ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'removed', generateRemovedFromArrayOperations),
+            ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'removed', generateRemovedFromArrayOperations),
+            ...generateRemovedFromArrayOperations(diff.collections, 'collection'),
         ]
     }
     operations.finalizeOperations = operations.finalizeOperations.filter(operation => operation.type !== 'schema.removeIndex' || !some(operations.finalizeOperations, {
@@ -33,21 +33,25 @@ export function generateMigration(
     return operations
 }
 
-export function generateDiffOperations(diff : Diff, type : string, key : 'added' | 'removed') {
-    const prefix = key === 'added' ? 'add' : 'remove'
-    const entries = diff[key]
-    if (entries instanceof Array) {
-        return Array.from(diff[key]).map(item => ({type: `schema.${camelCase(`${prefix}-${type}`)}`, [type]: item}))
-    }
+export function generateAddedToArrayOperations<T>(diff : Diff<string, Array<string>>, type : string) {
+    return Array.from(diff.added).map(item => ({type: `schema.${camelCase(`add-${type}`)}`, [type]: item}))
 }
 
-export function generateAddFieldOperations(diff : Diff) {
-    return Object.entries(diff.added).map(([name, config]) => ({ type: 'schema.addField', 'field': name, config }))
+export function generateRemovedFromArrayOperations<T>(diff : Diff<string, T>, type : string) {
+    return Array.from(diff.removed).map(item => ({type: `schema.${camelCase(`remove-${type}`)}`, [type]: item}))
+}
+
+export function generateAddedToMapOperations<T>(diff : Diff<string, T>, type : string) {
+    return Object.entries(diff.added).map(([name, definition]) => ({ 
+        type: `schema.${camelCase(`add-${type}`)}`,
+        [type]: name,
+        definition
+    }))
 }
 
 export function getCollectionDiffOperations(
     diffs : {[collection : string]: CollectionDiff}, diffKey : string, type : string, key : 'added' | 'removed',
-    generateOperations = generateDiffOperations
+    generateOperations
 ) {
     const operations = []
     for (const [collection, diff] of Object.entries(diffs)) {

@@ -1,4 +1,4 @@
-import { CollectionField } from "storex"
+import { CollectionField, CollectionDefinition } from "storex"
 
 export type Identifiers<Indentifier> = Array<Indentifier>
 
@@ -20,7 +20,7 @@ export interface RegistryDiff {
     fromVersion : Date
     toVersion : Date
 
-    collections : ComplexDiff<CollectionDiff>
+    collections : ComplexDiff<CollectionDiff, string, {[name : string] : CollectionDefinition}>
 }
 
 export interface CollectionDiff {

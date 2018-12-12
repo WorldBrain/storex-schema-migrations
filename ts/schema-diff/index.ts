@@ -13,10 +13,12 @@ export function getStorageRegistryChanges(registry : StorageRegistry, fromVersio
 
     const collections = {
         added: rawCollectionsDiff.added, removed: rawCollectionsDiff.removed,
-        changed: mapValues(rawCollectionsDiff.changed, (collectionDiff) => {
+        changed: mapValues(rawCollectionsDiff.changed, (collectionDiff, collectionName) => {
             return {
                 fields: {
-                    added: collectionDiff.changed.fields.added,
+                    added: fromPairs(collectionDiff.changed.fields.added.map(fieldName =>
+                        [fieldName, registry.collectionVersionMap[toVersion.getTime()][collectionName].fields[fieldName]]
+                    )),
                     changed: {},
                     removed: collectionDiff.changed.fields.removed,
                 },
@@ -36,12 +38,8 @@ export function getCollectionVersionsChanges(lhs : CollectionDefinition, rhs : C
 
 }
 
-export function _getVersionCollectionMap(collections : CollectionDefinition[]) : {[name : string] : CollectionDefinition} {
-    return fromPairs(collections.map(collectionDef => [collectionDef.name, collectionDef]))
-}
-
 export function _getCollections(registry : StorageRegistry, version : Date) {
-    return _getVersionCollectionMap(registry.collectionsByVersion[version.getTime()])
+    return registry.collectionVersionMap[version.getTime()]
 }
 
 export function _collectionDifferSelector(lhs, rhs, path) {

@@ -49,7 +49,7 @@ describe('Migration runner', () => {
                 args: [
                     'alterSchema',
                     {operations: [
-                        { type: 'addField', collection: 'user', field: 'displayName' },
+                        { type: 'addField', collection: 'user', field: 'displayName', config: {type: 'string'} },
                     ]}
                 ],
                 

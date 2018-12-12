@@ -12,7 +12,7 @@ export const TEST_USER_DATA_MIGRATIONS = {
 
 export const TEST_FORWARD_USER_MIGRATION = {
     prepareOperations: [
-        { type: 'schema.addField', collection: 'user', field: 'displayName' },
+        { type: 'schema.addField', collection: 'user', field: 'displayName', config: {type: 'string'} },
     ],
     dataOperations: [
         { type: 'writeField', collection: 'user', field: 'displayName', value: '`${object.firstName} ${object.lastName}`' }
@@ -25,8 +25,8 @@ export const TEST_FORWARD_USER_MIGRATION = {
 
 export const TEST_BACKWARD_USER_MIGRATION = {
     prepareOperations: [
-        { type: 'schema.addField', collection: 'user', field: 'firstName' },
-        { type: 'schema.addField', collection: 'user', field: 'lastName' },
+        { type: 'schema.addField', collection: 'user', field: 'firstName', config: {type: 'string'} },
+        { type: 'schema.addField', collection: 'user', field: 'lastName', config: {type: 'string'} },
     ],
     dataOperations: [
         { type: 'writeField', collection: 'user', field: 'firstName', value: {'object-property': [{split: ['$object.displayName', ' ']}, 0]} },
@@ -46,7 +46,7 @@ describe('Migration generator', () => {
                 added: ['users'], removed: ['passwords'],
                 changed: {
                     newsletters: {
-                        fields: {added: ['category'], changed: {}, removed: ['bla']},
+                        fields: {added: {'category': {type: 'string'}}, changed: {}, removed: ['bla']},
                         indices: {added: ['spam'], removed: ['grumpy']},
                         relationships: {added: [], removed: []},
                     }
@@ -56,7 +56,7 @@ describe('Migration generator', () => {
         expect(generateMigration({diff, direction: 'forward'})).toEqual({
             prepareOperations: [
                 {type: 'schema.addCollection', collection: 'users'},
-                {type: 'schema.addField', collection: 'newsletters', field: 'category'},
+                {type: 'schema.addField', collection: 'newsletters', field: 'category', config: {type: 'string'}},
                 {type: 'schema.addIndex', collection: 'newsletters', index: 'spam'},
             ],
             dataOperations: [],
@@ -76,7 +76,7 @@ describe('Migration generator', () => {
                 added: [], removed: [],
                 changed: {
                     newsletters: {
-                        fields: {added: [], changed: {}, removed: ['bla']},
+                        fields: {added: {}, changed: {}, removed: ['bla']},
                         indices: {added: [], removed: ['bla']},
                         relationships: {added: [], removed: []},
                     }
@@ -100,7 +100,7 @@ describe('Migration generator', () => {
                 added: [], removed: [],
                 changed: {
                     user: {
-                        fields: {added: ['displayName'], changed: {}, removed: ['firstName', 'lastName']},
+                        fields: {added: {displayName: {type: 'string'}}, changed: {}, removed: ['firstName', 'lastName']},
                         indices: {added: [], removed: []},
                         relationships: {added: [], removed: []},
                     }
@@ -122,7 +122,7 @@ describe('Migration generator', () => {
                 added: [], removed: [],
                 changed: {
                     user: {
-                        fields: {added: ['firstName', 'lastName'], changed: {}, removed: ['displayName']},
+                        fields: {added: {firstName: {type: 'string'}, lastName: {type: 'string'}}, changed: {}, removed: ['displayName']},
                         indices: {added: [], removed: []},
                         relationships: {added: [], removed: []},
                     }

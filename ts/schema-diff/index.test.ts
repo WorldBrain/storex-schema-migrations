@@ -45,7 +45,7 @@ describe('Schema differ', () => {
                 added: ['foo'],
                 removed: [],
                 changed: {user: {
-                    fields: {added: ['displayName'], changed: {}, removed: ['firstName', 'lastName']},
+                    fields: {added: {displayName: {type: 'string', _index: 1}}, changed: {}, removed: ['firstName', 'lastName']},
                     indices: {added: ['displayName'], removed: []},
                     relationships: {added: [], removed: []}
                 }}

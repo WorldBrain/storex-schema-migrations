@@ -43,12 +43,12 @@ describe('Migration generator', () => {
             fromVersion: new Date(2018, 6, 6),
             toVersion: new Date(2018, 6, 7),
             collections: {
-                created: ['users'], removed: ['passwords'],
+                added: ['users'], removed: ['passwords'],
                 changed: {
                     newsletters: {
-                        fields: {created: ['category'], changed: {}, removed: ['bla']},
-                        indices: {created: ['spam'], removed: ['grumpy']},
-                        relationships: {created: [], removed: []},
+                        fields: {added: ['category'], changed: {}, removed: ['bla']},
+                        indices: {added: ['spam'], removed: ['grumpy']},
+                        relationships: {added: [], removed: []},
                     }
                 }
             }
@@ -73,12 +73,12 @@ describe('Migration generator', () => {
             fromVersion: new Date(2018, 6, 6),
             toVersion: new Date(2018, 6, 7),
             collections: {
-                created: [], removed: [],
+                added: [], removed: [],
                 changed: {
                     newsletters: {
-                        fields: {created: [], changed: {}, removed: ['bla']},
-                        indices: {created: [], removed: ['bla']},
-                        relationships: {created: [], removed: []},
+                        fields: {added: [], changed: {}, removed: ['bla']},
+                        indices: {added: [], removed: ['bla']},
+                        relationships: {added: [], removed: []},
                     }
                 }
             }
@@ -97,12 +97,12 @@ describe('Migration generator', () => {
             fromVersion: new Date(2018, 6, 6),
             toVersion: new Date(2018, 6, 7),
             collections: {
-                created: [], removed: [],
+                added: [], removed: [],
                 changed: {
                     user: {
-                        fields: {created: ['displayName'], changed: {}, removed: ['firstName', 'lastName']},
-                        indices: {created: [], removed: []},
-                        relationships: {created: [], removed: []},
+                        fields: {added: ['displayName'], changed: {}, removed: ['firstName', 'lastName']},
+                        indices: {added: [], removed: []},
+                        relationships: {added: [], removed: []},
                     }
                 }
             }
@@ -119,12 +119,12 @@ describe('Migration generator', () => {
             fromVersion: new Date(2018, 6, 7),
             toVersion: new Date(2018, 6, 6),
             collections: {
-                created: [], removed: [],
+                added: [], removed: [],
                 changed: {
                     user: {
-                        fields: {created: ['firstName', 'lastName'], changed: {}, removed: ['displayName']},
-                        indices: {created: [], removed: []},
-                        relationships: {created: [], removed: []},
+                        fields: {added: ['firstName', 'lastName'], changed: {}, removed: ['displayName']},
+                        indices: {added: [], removed: []},
+                        relationships: {added: [], removed: []},
                     }
                 }
             }

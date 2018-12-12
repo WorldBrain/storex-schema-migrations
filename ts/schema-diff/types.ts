@@ -1,7 +1,7 @@
 export type Identifiers<Indentifier> = Array<Indentifier>
 
 export interface Diff<Identifier = string> {
-    created : Identifiers<Identifier>
+    added : Identifiers<Identifier>
     removed : Identifiers<Identifier>
     // renamed : {[from : string] : string} // Too complex to do safely, implement later if needed
 }

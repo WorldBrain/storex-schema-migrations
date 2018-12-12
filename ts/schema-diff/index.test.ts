@@ -31,7 +31,7 @@ describe('Schema differ', () => {
                 fields: {
                     blub: { type: 'string' },
                 },
-                indices: []
+                indices: [],
             }],
         })
         await storageManager.finishInitialization()
@@ -42,12 +42,12 @@ describe('Schema differ', () => {
             fromVersion,
             toVersion,
             collections: {
-                created: ['foo'],
+                added: ['foo'],
                 removed: [],
                 changed: {user: {
-                    fields: {created: ['displayName'], changed: {}, removed: ['firstName', 'lastName']},
-                    indices: {created: ['displayName'], removed: []},
-                    relationships: {created: [], removed: []}
+                    fields: {added: ['displayName'], changed: {}, removed: ['firstName', 'lastName']},
+                    indices: {added: ['displayName'], removed: []},
+                    relationships: {added: [], removed: []}
                 }}
             }
         } as RegistryDiff)

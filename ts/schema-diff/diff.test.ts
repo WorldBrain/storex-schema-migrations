@@ -79,7 +79,9 @@ describe('Low-level object diff', () => {
                 removed: [{key: 'b'}],
                 changed: [{
                     key: 'a',
-                    added: ['blub']
+                    added: ['blub'],
+                    removed: [],
+                    changed: {}
                 }],
             }}
         })

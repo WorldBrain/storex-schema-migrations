@@ -2,6 +2,7 @@ import * as isBoolean from 'lodash/isBoolean'
 import * as isNumber from 'lodash/isNumber'
 import * as isString from 'lodash/isString'
 import * as isPlainObject from 'lodash/isPlainObject'
+import * as find from 'lodash/find'
 
 export type DifferContext = {getDiffer? : DifferSelector, path? : any[]}
 export type Differ = (lhs, rhs, context? : DifferContext) => any
@@ -55,9 +56,22 @@ export function objectArrayDiffer(getKey : ((obj) => string)) {
             rhs.map(obj => getKey(obj)),
         )
 
+        const changed = []
+        for (const key of stable) {
+            const childLhs = find(lhs, obj => getKey(obj) === key)
+            const childRhs = find(rhs, obj => getKey(obj) === key)
+    
+            const subPath = [...context.path, key]
+            const diff = diffObject(childLhs, childRhs, {...context, path: subPath})
+            if (!isEmptyDiff(diff)) {
+                changed.push({key, ...diff})
+            }
+        }
+
         return {
             added: [...added].map(key => ({key})),
             removed: [...removed].map(key => ({key})),
+            changed,
         }
     }
 }

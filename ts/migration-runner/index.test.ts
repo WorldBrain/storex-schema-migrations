@@ -49,7 +49,7 @@ describe('Migration runner', () => {
                 args: [
                     'alterSchema',
                     {operations: [
-                        { type: 'addField', collection: 'user', field: 'displayName', definition: {type: 'string'} },
+                        { type: 'prepareAddField', collection: 'user', field: 'displayName', definition: {type: 'string'} },
                     ]}
                 ],
                 
@@ -78,8 +78,9 @@ describe('Migration runner', () => {
                 args: [
                     'alterSchema',
                     {operations: [
-                    { type: 'removeField', collection: 'user', field: 'firstName' },
-                    { type: 'removeField', collection: 'user', field: 'lastName' },
+                        { type: 'finalizeAddField', collection: 'user', field: 'displayName', definition: {type: 'string'} },
+                        { type: 'removeField', collection: 'user', field: 'firstName' },
+                        { type: 'removeField', collection: 'user', field: 'lastName' },
                 ]}],
             },
         ])

@@ -13,13 +13,18 @@ export function generateMigration(
     let operations : Migration = {
         prepareOperations: [
             ...generateAddedToMapOperations(diff.collections, 'collection'),
-            ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'added', generateAddedToMapOperations),
+            ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'added',
+                (diff, type) => generateAddedToMapOperations(diff, type, 'prepare')
+            ),
             ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'added', generateAddedToArrayOperations),
         ],
         dataOperations: [
             ...(hasDataMigration ? config.dataOperations[direction] : []),
         ],
         finalizeOperations: [
+            ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'added',
+                (diff, type) => generateAddedToMapOperations(diff, type, 'finalize')
+            ),
             ...getCollectionDiffOperations(diff.collections.changed, 'indices', 'index', 'removed', generateRemovedFromArrayOperations),
             ...getCollectionDiffOperations(diff.collections.changed, 'fields', 'field', 'removed', generateRemovedFromArrayOperations),
             ...generateRemovedFromArrayOperations(diff.collections, 'collection'),
@@ -41,9 +46,10 @@ export function generateRemovedFromArrayOperations<T>(diff : Diff<string, T>, ty
     return Array.from(diff.removed).map(item => ({type: `schema.${camelCase(`remove-${type}`)}`, [type]: item}))
 }
 
-export function generateAddedToMapOperations<T>(diff : Diff<string, T>, type : string) {
+export function generateAddedToMapOperations<T>(diff : Diff<string, T>, type : string, prefix : 'prepare' | 'finalize' = null) {
+    const fullPrefix = prefix ? `${prefix}-` : ''
     return Object.entries(diff.added).map(([name, definition]) => ({ 
-        type: `schema.${camelCase(`add-${type}`)}`,
+        type: `schema.${camelCase(`${fullPrefix}add-${type}`)}`,
         [type]: name,
         definition
     }))

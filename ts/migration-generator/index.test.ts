@@ -13,12 +13,13 @@ export const TEST_USER_DATA_MIGRATIONS = {
 
 export const TEST_FORWARD_USER_MIGRATION = {
     prepareOperations: [
-        { type: 'schema.addField', collection: 'user', field: 'displayName', definition: {type: 'string'} },
+        { type: 'schema.prepareAddField', collection: 'user', field: 'displayName', definition: {type: 'string'} },
     ],
     dataOperations: [
         { type: 'writeField', collection: 'user', field: 'displayName', value: '`${object.firstName} ${object.lastName}`' }
     ],
     finalizeOperations: [
+        { type: 'schema.finalizeAddField', collection: 'user', field: 'displayName', definition: {type: 'string'} },
         { type: 'schema.removeField', collection: 'user', field: 'firstName' },
         { type: 'schema.removeField', collection: 'user', field: 'lastName' },
     ]
@@ -26,14 +27,16 @@ export const TEST_FORWARD_USER_MIGRATION = {
 
 export const TEST_BACKWARD_USER_MIGRATION = {
     prepareOperations: [
-        { type: 'schema.addField', collection: 'user', field: 'firstName', definition: {type: 'string'} },
-        { type: 'schema.addField', collection: 'user', field: 'lastName', definition: {type: 'string'} },
+        { type: 'schema.prepareAddField', collection: 'user', field: 'firstName', definition: {type: 'string'} },
+        { type: 'schema.prepareAddField', collection: 'user', field: 'lastName', definition: {type: 'string'} },
     ],
     dataOperations: [
         { type: 'writeField', collection: 'user', field: 'firstName', value: {'object-property': [{split: ['$object.displayName', ' ']}, 0]} },
         { type: 'writeField', collection: 'user', field: 'lastName', value:  [{split: ['$object.displayName', ' ']}, 1]}
     ],
     finalizeOperations: [
+        { type: 'schema.finalizeAddField', collection: 'user', field: 'firstName', definition: {type: 'string'} },
+        { type: 'schema.finalizeAddField', collection: 'user', field: 'lastName', definition: {type: 'string'} },
         { type: 'schema.removeField', collection: 'user', field: 'displayName' },
     ]
 }
@@ -65,11 +68,12 @@ describe('Migration generator', () => {
         expect(generateMigration({diff, direction: 'forward'})).toEqual({
             prepareOperations: [
                 {type: 'schema.addCollection', collection: 'users', definition: userCollection},
-                {type: 'schema.addField', collection: 'newsletters', field: 'category', definition: {type: 'string'}},
+                {type: 'schema.prepareAddField', collection: 'newsletters', field: 'category', definition: {type: 'string'}},
                 {type: 'schema.addIndex', collection: 'newsletters', index: 'spam'},
             ],
             dataOperations: [],
             finalizeOperations: [
+                {type: 'schema.finalizeAddField', collection: 'newsletters', field: 'category', definition: {type: 'string'}},
                 {type: 'schema.removeIndex', collection: 'newsletters', index: 'grumpy'},
                 {type: 'schema.removeField', collection: 'newsletters', field: 'bla'},
                 {type: 'schema.removeCollection', collection: 'passwords'},

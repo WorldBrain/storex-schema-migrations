@@ -5,7 +5,6 @@ import * as mapValues from 'lodash/mapValues'
 import StorageRegistry from 'storex/lib/registry'
 import { CollectionDefinition } from 'storex/lib/types'
 import { diffObject, defaultDifferSelector, diffStringArray, objectArrayDiffer } from './diff'
-import { inspect } from 'util';
 
 export function getStorageRegistryChanges(registry : StorageRegistry, fromVersion : Date, toVersion : Date) {
     const fromCollections = _getCollections(registry, fromVersion)
@@ -29,7 +28,7 @@ export function getStorageRegistryChanges(registry : StorageRegistry, fromVersio
             }
         })
     }
-    
+
     return {fromVersion, toVersion, collections}
 }
 

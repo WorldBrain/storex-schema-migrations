@@ -42,7 +42,12 @@ describe('Schema differ', () => {
             fromVersion,
             toVersion,
             collections: {
-                added: ['foo'],
+                added: {foo: expect.objectContaining({
+                    version: new Date(2018, 8, 31),
+                    fields: expect.objectContaining({
+                        blub: { type: 'string' },
+                    }),
+                })},
                 removed: [],
                 changed: {user: {
                     fields: {added: {displayName: {type: 'string', _index: 1}}, changed: {}, removed: ['firstName', 'lastName']},

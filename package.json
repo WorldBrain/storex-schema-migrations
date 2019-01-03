@@ -1,6 +1,6 @@
 {
-  "name": "storex-schema-migrations",
-  "version": "0.0.1",
+  "name": "@worldbrain-io/storex-schema-migrations",
+  "version": "0.1.0",
   "description": "Storex schema migrations",
   "main": "lib/index.js",
   "typings": "lib/index",

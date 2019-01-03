@@ -12,7 +12,8 @@ export function getStorageRegistryChanges(registry : StorageRegistry, fromVersio
     const rawCollectionsDiff = diffObject(fromCollections, toCollections, {getDiffer: _collectionDifferSelector})
 
     const collections = {
-        added: rawCollectionsDiff.added, removed: rawCollectionsDiff.removed,
+        added: fromPairs(rawCollectionsDiff.added.map(name => [name, toCollections[name]])),
+        removed: rawCollectionsDiff.removed,
         changed: mapValues(rawCollectionsDiff.changed, (collectionDiff, collectionName) => {
             return {
                 fields: {

@@ -19,7 +19,7 @@ describe('Migration runner', () => {
                 }
             },
             backend: {
-                operation: stub('operation', null, async ({args: [operation, runner]}) => {
+                operation: stub('operation', null, async ({args: [operation, {collections}, runner]}) => {
                     if (operation === 'transaction') {
                         await runner({collection: collection => ({
                             findObjects: stub('findObjects', collection, async ({args: [query, options]}) => {
@@ -56,7 +56,7 @@ describe('Migration runner', () => {
             },
             {
                 method: 'operation',
-                args: ['transaction', expect.any(Function)],
+                args: ['transaction', {collections: ['user']}, expect.any(Function)],
             },
             {
                 method: 'findObjects',

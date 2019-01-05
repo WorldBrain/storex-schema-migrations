@@ -21,17 +21,19 @@ describe('Migration runner', () => {
             backend: {
                 operation: stub('operation', null, async ({args: [operation, {collections}, runner]}) => {
                     if (operation === 'transaction') {
-                        await runner({collection: collection => ({
-                            findObjects: stub('findObjects', collection, async ({args: [query, options]}) => {
-                                if (Object.keys(query).length === 0) {
-                                    return [
-                                        {id: 1, firstName: 'Jane', lastName: 'Daniels'},
-                                        {id: 2, firstName: 'Jack', lastName: 'Doe'},
-                                    ]
-                                }
-                            }),
-                            updateOneObject: stub('updateOneObject', collection)
-                        })})
+                        await runner({
+                            storageManager: {collection: collection => ({
+                                findObjects: stub('findObjects', collection, async ({args: [query, options]}) => {
+                                    if (Object.keys(query).length === 0) {
+                                        return [
+                                            {id: 1, firstName: 'Jane', lastName: 'Daniels'},
+                                            {id: 2, firstName: 'Jack', lastName: 'Doe'},
+                                        ]
+                                    }
+                                }),
+                            })},
+                            transactionOperation: stub('transactionOperation')
+                        })
                     }
                 }),
             },
@@ -64,14 +66,12 @@ describe('Migration runner', () => {
                 args: [{}, {fields: ['id']}]
             },
             {
-                method: 'updateOneObject',
-                collection: 'user',
-                args: [{id: 1}, {displayName: 'Jane Daniels'}]
+                method: 'transactionOperation',
+                args: ['updateOneObject', 'user', {id: 1}, {displayName: 'Jane Daniels'}]
             },
             {
-                method: 'updateOneObject',
-                collection: 'user',
-                args: [{id: 2}, {displayName: 'Jack Doe'}]
+                method: 'transactionOperation',
+                args: ['updateOneObject', 'user', {id: 2}, {displayName: 'Jack Doe'}]
             },
             {
                 method: 'operation',

@@ -1,12 +1,11 @@
 import StorageManager from "storex"
 import { MigrationConfig } from "./migration-generator/types";
-import { MigrationDirection } from "./types";
+import { MigrationDirection, MigrationSelection } from "./types";
 import { getStorageRegistryChanges } from "./schema-diff";
 import { generateMigration } from "./migration-generator";
 import { runMigration } from "./migration-runner";
 import { MigrationStageChoice } from "./migration-runner/types";
 
-export type MigrationSelection = {fromVersion : Date, toVersion : Date}
 export type MigrationList = Array<{fromVersion : Date, toVersion : Date, config : MigrationConfig}>
 export function selectMigrationFromList(
     selection : MigrationSelection, configs : MigrationList

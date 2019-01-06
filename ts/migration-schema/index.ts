@@ -9,7 +9,7 @@ export function getMigrationSchema(registry : StorageRegistry, selection : Migra
         const toCollectionDefinition = toCollections[collectionName]
         migrationCollections[collectionName] = {
             ...toCollectionDefinition,
-            version: 'temporary',
+            version: new Date(0),
             fields: {
                 ...fromCollectionDefinition.fields,
                 ...toCollectionDefinition.fields

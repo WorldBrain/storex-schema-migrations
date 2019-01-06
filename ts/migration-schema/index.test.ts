@@ -28,7 +28,7 @@ describe('Intermediate migration schema generation', () => {
         
         expect(schema.getMigrationSchema(storageManager.registry, {fromVersion: new Date(2018, 7, 31), toVersion: new Date(2018, 8, 31)})).toEqual({
             user: expect.objectContaining({
-                version: 'temporary',
+                version: new Date(0),
                 fields: expect.objectContaining({
                     firstName: { type: 'string' },
                     lastName: { type: 'string' },

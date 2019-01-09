@@ -1,4 +1,4 @@
-import StorageManager from "storex"
+import StorageManager, { StorageRegistry } from "storex"
 import { MigrationConfig } from "./migration-generator/types";
 import { MigrationDirection, MigrationSelection } from "./types";
 import { getStorageRegistryChanges } from "./schema-diff";
@@ -32,11 +32,11 @@ export function getMigrationDirection(selection : MigrationSelection) : Migratio
     return selection.toVersion.getTime() > selection.fromVersion.getTime() ? 'forward' : 'backward'
 }
 
-export async function executeMigration(storageManager : StorageManager, migrationStorageManager : StorageManager, selection : MigrationSelection, config : MigrationConfig, stages : MigrationStageChoice) {
-    const diff = getStorageRegistryChanges(storageManager.registry, selection.fromVersion, selection.toVersion)
+export async function executeMigration(registry : StorageRegistry, migrationStorageManager : StorageManager, selection : MigrationSelection, config : MigrationConfig, stages : MigrationStageChoice) {
+    const diff = getStorageRegistryChanges(registry, selection.fromVersion, selection.toVersion)
     const migration = generateMigration({diff, config, direction: getMigrationDirection(selection)})
     
-    const migrationSchema = getMigrationSchema(storageManager.registry, selection)
+    const migrationSchema = getMigrationSchema(registry, selection)
     migrationStorageManager.registry.registerCollections(migrationSchema)
     await migrationStorageManager.finishInitialization()
     

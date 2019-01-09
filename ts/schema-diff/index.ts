@@ -17,15 +17,15 @@ export function getStorageRegistryChanges(registry : StorageRegistry, fromVersio
         changed: mapValues(rawCollectionsDiff.changed, (collectionDiff, collectionName) => {
             return {
                 fields: {
-                    added: fromPairs(collectionDiff.changed.fields.added.map(fieldName =>
+                    added: fromPairs((collectionDiff.changed.fields || {added: []}).added.map(fieldName =>
                         [fieldName, registry.collectionVersionMap[toVersion.getTime()][collectionName].fields[fieldName]]
                     )),
                     changed: {},
-                    removed: collectionDiff.changed.fields.removed,
+                    removed: (collectionDiff.changed.fields || {removed: []}).removed,
                 },
                 indices: {
-                    added: collectionDiff.changed.indices.added.map(change => change.key),
-                    removed: collectionDiff.changed.indices.removed.map(change => change.key),
+                    added: (collectionDiff.changed.indices || {added: []}).added.map(change => change.key),
+                    removed: (collectionDiff.changed.indices || {removed: []}).removed.map(change => change.key),
                 },
                 relationships: {added: [], removed: []},
             }

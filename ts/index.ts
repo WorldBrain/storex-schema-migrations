@@ -1,4 +1,4 @@
-import StorageManager, { StorageRegistry } from "storex"
+import StorageManager, { StorageRegistry } from '@worldbrain/storex'
 import { MigrationConfig } from "./migration-generator/types";
 import { MigrationDirection, MigrationSelection } from "./types";
 import { getStorageRegistryChanges } from "./schema-diff";

@@ -1,5 +1,5 @@
 {
-  "name": "@worldbrain-io/storex-schema-migrations",
+  "name": "@worldbrain/storex-schema-migrations",
   "version": "0.1.0",
   "description": "Storex schema migrations",
   "main": "lib/index.js",
@@ -7,7 +7,6 @@
   "scripts": {
     "prepare": "tsc",
     "prepare:watch": "npm run prepare -- -w",
-    "prepublishOnly": "npm run prepare",
     "test": "mocha --require ts-node/register 'ts/**/*.test.ts'",
     "test:watch": "mocha -r source-map-support/register -r ts-node/register 'ts/**/*.test.ts' --watch --watch-extensions ts"
   },
@@ -19,6 +18,7 @@
   ],
   "author": "Vincent den Boer",
   "dependencies": {
+    "@worldbrain/storex": "^0.1.1",
     "lodash": "^4.17.10",
     "source-map-support": "^0.4.18"
   },

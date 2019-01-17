@@ -78,3 +78,9 @@ Further docs
 ============
 
 To be written, but meanwhile the unit tests and the TypeScript type declarations are the best reference.
+
+Limitations
+===========
+
+* No renaming of fields and collections yet, since special care needs to be taken there when rolling out a new application version among different servers
+* No migration of field options and backend-specfic options yet

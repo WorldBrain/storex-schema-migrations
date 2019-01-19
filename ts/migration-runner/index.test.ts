@@ -3,7 +3,7 @@ import { runMigration } from ".";
 import { TEST_FORWARD_USER_MIGRATION } from "../migration-generator/index.test";
 
 describe('Migration runner', () => {
-    it('should be able to run a migration on Storex', async () => {
+    it('should be able to run a migration on @worldbrain/storex', async () => {
         const calls = []
         const stub = (method, collection = null, func = null) => async (...args) => {
             calls.push({...collection ? {collection} : {}, method, args})

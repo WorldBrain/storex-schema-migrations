@@ -1,7 +1,7 @@
 import * as expect from 'expect'
 import { RegistryDiff } from "../schema-diff/types";
 import { generateMigration } from ".";
-import { CollectionDefinition } from 'storex';
+import { CollectionDefinition } from '@worldbrain/storex';
 
 export const TEST_USER_DATA_MIGRATIONS = {
     forward: [{type: 'writeField', collection: 'user', field: 'displayName', value: '`${object.firstName} ${object.lastName}`'}],

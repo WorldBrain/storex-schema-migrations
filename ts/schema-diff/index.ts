@@ -2,13 +2,13 @@ import * as isArray from 'lodash/isArray'
 import * as isString from 'lodash/isString'
 import * as fromPairs from 'lodash/fromPairs'
 import * as mapValues from 'lodash/mapValues'
-import StorageRegistry from 'storex/lib/registry'
-import { CollectionDefinition } from 'storex/lib/types'
+import StorageRegistry from '@worldbrain/storex/lib/registry'
+import { CollectionDefinition } from '@worldbrain/storex/lib/types'
 import { diffObject, defaultDifferSelector, diffStringArray, objectArrayDiffer } from './diff'
 
 export function getStorageRegistryChanges(registry : StorageRegistry, fromVersion : Date, toVersion : Date) {
-    const fromCollections = _getCollections(registry, fromVersion)
-    const toCollections = _getCollections(registry, toVersion)
+    const fromCollections = registry.getCollectionsByVersion(fromVersion)
+    const toCollections = registry.getCollectionsByVersion(toVersion)
     const rawCollectionsDiff = diffObject(fromCollections, toCollections, {getDiffer: _collectionDifferSelector})
 
     const collections = {
@@ -18,7 +18,7 @@ export function getStorageRegistryChanges(registry : StorageRegistry, fromVersio
             return {
                 fields: {
                     added: fromPairs((collectionDiff.changed.fields || {added: []}).added.map(fieldName =>
-                        [fieldName, registry.collectionVersionMap[toVersion.getTime()][collectionName].fields[fieldName]]
+                        [fieldName, registry.getCollectionsByVersion(toVersion)[collectionName].fields[fieldName]]
                     )),
                     changed: {},
                     removed: (collectionDiff.changed.fields || {removed: []}).removed,
@@ -33,14 +33,6 @@ export function getStorageRegistryChanges(registry : StorageRegistry, fromVersio
     }
 
     return {fromVersion, toVersion, collections}
-}
-
-export function getCollectionVersionsChanges(lhs : CollectionDefinition, rhs : CollectionDefinition) {
-
-}
-
-export function _getCollections(registry : StorageRegistry, version : Date) {
-    return registry.collectionVersionMap[version.getTime()]
 }
 
 export function _collectionDifferSelector(lhs, rhs, path) {

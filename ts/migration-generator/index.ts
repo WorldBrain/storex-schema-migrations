@@ -1,6 +1,6 @@
 import * as camelCase from 'lodash/camelCase'
 import * as some from 'lodash/some'
-// import StorageRegistry from "storex/lib/registry";
+// import StorageRegistry from "@worldbrain/storex/lib/registry";
 import { MigrationDirection } from '../types'
 import { Diff, RegistryDiff, CollectionDiff } from "../schema-diff/types";
 import { MigrationConfig, Migration } from "./types"

@@ -1,4 +1,4 @@
-import StorageManager from "storex"
+import StorageManager from "@worldbrain/storex"
 import { OptionalBackwardMigrationDirectionMap } from "../types"
 
 export interface Migration {

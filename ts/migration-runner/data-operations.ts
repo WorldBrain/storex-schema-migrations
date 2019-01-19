@@ -1,5 +1,5 @@
 import { UserLogic } from 'user-logic'
-import StorageManager from "storex"
+import StorageManager from "@worldbrain/storex"
 import { MigrationOperationConfig, WriteFieldOperationConfig, RunJavascriptOperationConfig } from "../migration-generator/types"
 
 export async function _executeWriteDataOperation(operation : WriteFieldOperationConfig, storageManager : StorageManager) {

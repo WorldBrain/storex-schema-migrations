@@ -1,9 +1,9 @@
-import { StorageRegistry } from "storex";
+import { StorageRegistry } from "@worldbrain/storex";
 import { MigrationSelection } from "../types";
 
 export function getMigrationSchema(registry : StorageRegistry, selection : MigrationSelection) {
-    const fromCollections = _getCollections(registry, selection.fromVersion)
-    const toCollections = _getCollections(registry, selection.toVersion)
+    const fromCollections = registry.getCollectionsByVersion(selection.fromVersion)
+    const toCollections = registry.getCollectionsByVersion(selection.toVersion)
     const migrationCollections = {}
     for (const [collectionName, fromCollectionDefinition] of Object.entries(fromCollections)) {
         const toCollectionDefinition = toCollections[collectionName]
@@ -17,8 +17,4 @@ export function getMigrationSchema(registry : StorageRegistry, selection : Migra
         }
     }
     return migrationCollections
-}
-
-export function _getCollections(registry : StorageRegistry, version : Date) {
-    return registry.collectionVersionMap[version.getTime()]
 }

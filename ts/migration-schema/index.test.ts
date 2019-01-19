@@ -1,5 +1,5 @@
 import * as expect from 'expect'
-import StorageManager from 'storex'
+import StorageManager from '@worldbrain/storex'
 import * as schema from './'
 
 describe('Intermediate migration schema generation', () => {

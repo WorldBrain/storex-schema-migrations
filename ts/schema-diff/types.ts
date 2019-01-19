@@ -1,4 +1,4 @@
-import { CollectionField, CollectionDefinition } from "storex"
+import { CollectionField, CollectionDefinition } from "@worldbrain/storex"
 
 export type Identifiers<Indentifier> = Array<Indentifier>
 

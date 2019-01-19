@@ -1,4 +1,4 @@
-import StorageManager from "storex"
+import StorageManager from "@worldbrain/storex"
 import { Migration, MigrationOperationConfig } from "../migration-generator/types"
 import { MigrationStageChoice, MigrationStage } from "./types";
 import { DEFAULT_DATA_OPERATIONS } from "./data-operations";

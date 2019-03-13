@@ -7,7 +7,7 @@ export const TEST_USER_DATA_MIGRATIONS = {
     forward: [{type: 'writeField', collection: 'user', field: 'displayName', value: '`${object.firstName} ${object.lastName}`'}],
     backward: [
         { type: 'writeField', collection: 'user', field: 'firstName', value: {'object-property': [{split: ['$object.displayName', ' ']}, 0]} },
-        { type: 'writeField', collection: 'user', field: 'lastName', value:  [{split: ['$object.displayName', ' ']}, 1]}
+        { type: 'writeField', collection: 'user', field: 'lastName', value:  {'object-property': [{split: ['$object.displayName', ' ']}, 1]} },
     ],
 }
 
@@ -32,7 +32,7 @@ export const TEST_BACKWARD_USER_MIGRATION = {
     ],
     dataOperations: [
         { type: 'writeField', collection: 'user', field: 'firstName', value: {'object-property': [{split: ['$object.displayName', ' ']}, 0]} },
-        { type: 'writeField', collection: 'user', field: 'lastName', value:  [{split: ['$object.displayName', ' ']}, 1]}
+        { type: 'writeField', collection: 'user', field: 'lastName', value:  {'object-property': [{split: ['$object.displayName', ' ']}, 1]} },
     ],
     finalizeOperations: [
         { type: 'schema.finalizeAddField', collection: 'user', field: 'firstName', definition: {type: 'string'} },

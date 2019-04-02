@@ -7,6 +7,7 @@ export function getMigrationSchema(registry : StorageRegistry, selection : Migra
     const migrationCollections = {}
     for (const [collectionName, fromCollectionDefinition] of Object.entries(fromCollections)) {
         const toCollectionDefinition = toCollections[collectionName]
+        
         migrationCollections[collectionName] = {
             ...toCollectionDefinition,
             version: new Date(0),

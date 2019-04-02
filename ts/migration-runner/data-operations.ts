@@ -5,7 +5,7 @@ import { MigrationOperationConfig, WriteFieldOperationConfig, RunJavascriptOpera
 export async function _executeWriteDataOperation(operation : WriteFieldOperationConfig, storageManager : StorageManager) {
     const pkField = storageManager.registry.collections[operation.collection].pkIndex as string
     const valueLogic = new UserLogic({definition: operation.value})
-    await storageManager.backend.operation('transaction', {collections: [operation.collection]}, async ({transactionOperation}) => {
+    await storageManager.operation('transaction', {collections: [operation.collection]}, async ({transactionOperation}) => {
         const objects = await storageManager.collection(operation.collection).findObjects({}, {fields: [pkField]})
         for (const object of objects) {
             await transactionOperation('updateObject', operation.collection, {

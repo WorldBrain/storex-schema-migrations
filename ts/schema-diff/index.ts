@@ -3,7 +3,7 @@ import * as isString from 'lodash/isString'
 import * as fromPairs from 'lodash/fromPairs'
 import * as mapValues from 'lodash/mapValues'
 import StorageRegistry from '@worldbrain/storex/lib/registry'
-import { CollectionDefinition } from '@worldbrain/storex/lib/types'
+import { CollectionDefinition, Relationship, isChildOfRelationship } from '@worldbrain/storex/lib/types'
 import { diffObject, defaultDifferSelector, diffStringArray, objectArrayDiffer } from './diff'
 
 export function getStorageRegistryChanges(registry : StorageRegistry, fromVersion : Date, toVersion : Date) {
@@ -49,6 +49,15 @@ export function _collectionDifferSelector(lhs, rhs, path) {
     }
     if (path.length === 2 && path[1] === 'indices') {
         return objectArrayDiffer(index => index.field)
+    }
+    if (path.length === 2 && path[1] === 'relationships') {
+        return objectArrayDiffer((relationship : Relationship) => {
+            if (isChildOfRelationship(relationship)) {
+                return relationship.fieldName
+            } else {
+                throw new Error(`Don't know how to diff this kind of relationship [${path.join(' -> ')}]`)
+            }
+        })
     }
     
     return defaultDifferSelector(lhs, rhs, path)

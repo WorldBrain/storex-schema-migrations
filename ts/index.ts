@@ -1,13 +1,17 @@
 import StorageManager, { StorageRegistry } from '@worldbrain/storex'
 import { MigrationConfig } from "./migration-generator/types";
-import { MigrationDirection, MigrationSelection } from "./types";
+import { MigrationDirection, MigrationSelection, MigrationList } from "./types";
 import { getStorageRegistryChanges } from "./schema-diff";
 import { generateMigration } from "./migration-generator";
 import { runMigration } from "./migration-runner";
 import { MigrationStageChoice } from "./migration-runner/types";
 import { getMigrationSchema } from "./migration-schema";
 
-export type MigrationList = Array<{fromVersion : Date, toVersion : Date, config : MigrationConfig}>
+export * from './schema-diff'
+export * from './migration-generator'
+export * from './migration-schema'
+export * from './migration-runner'
+
 export function selectMigrationFromList(
     selection : MigrationSelection, configs : MigrationList
 ) : {config : MigrationConfig, direction : MigrationDirection} {

@@ -3,7 +3,7 @@ import { runMigration } from ".";
 import { TEST_FORWARD_USER_MIGRATION } from "../migration-generator/index.test";
 
 describe('Migration runner', () => {
-    it('should be able to run a migration on @worldbrain/storex', async () => {
+    it('should be able to run a migration on storex', async () => {
         const calls = []
         const stub = (method, collection = null, func = null) => async (...args) => {
             calls.push({...collection ? {collection} : {}, method, args})
@@ -18,15 +18,13 @@ describe('Migration runner', () => {
                     user: {pkIndex: 'id'}
                 }
             },
-            backend: {
-                operation: stub('operation', null, async ({args: [operation, {collections}, runner]}) => {
-                    if (operation === 'transaction') {
-                        await runner({
-                            transactionOperation: stub('transactionOperation')
-                        })
-                    }
-                }),
-            },
+            operation: stub('operation', null, async ({args: [operation, {collections}, runner]}) => {
+                if (operation === 'transaction') {
+                    await runner({
+                        transactionOperation: stub('transactionOperation')
+                    })
+                }
+            }),
             collection: collection => ({
                 findObjects: stub('findObjects', collection, async ({args: [query, options]}) => {
                     if (Object.keys(query).length === 0) {

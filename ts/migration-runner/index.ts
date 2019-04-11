@@ -16,7 +16,7 @@ export async function runMigration(
     _validateSchemaOperations(migration, 'finalize')
 
     if (stages.prepare) {
-        await storageManager.backend.operation('alterSchema', {
+        await storageManager.operation('alterSchema', {
             operations: _prepareSchemaOperations(migration, 'prepare'),
         })
     }
@@ -24,7 +24,7 @@ export async function runMigration(
         await _executeDataOperations(migration.dataOperations, storageManager)
     }
     if (stages.finalize) {
-        await storageManager.backend.operation('alterSchema', {
+        await storageManager.operation('alterSchema', {
             operations: _prepareSchemaOperations(migration, 'finalize'),
         })
     }
